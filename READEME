@@ -1,0 +1,69 @@
+Code mostly written by myself, Matthew Walker, with some by Mark Malhot (sp?)
+
+TO USE THIS CODE
+  - first of all, GET THE SENSORS/MOTORS FROM CONTROLCODE.C 
+      this may be commented, but I allways kept it up-to-date
+  - some constants will need to be changed if using a different robot -- see "PID CONTROL", specifically point 4
+
+TO UNDERSTAND THIS CODE
+  - I recommend a understanding of tasks and a rudimentary knowledge of pointers, structs, #define, #ifdef & #include
+  - Reading PIDControlTheory_rev3.pdf (included) is probably a good idea. Explains PID stuff.
+  - PID actually works. Yes.
+  - Understand the keyword "static" when used in a function
+  - ControlCode.c is a pretty good place to start
+  - There are comments throught most files. Best place to start are the ones at the top.
+  - Many things may seem inconsistent, but that's because they are.
+      ROBOTC doesn't make it any easier to rewrite/rename/redo stuff than just editing the text
+      and this had greatly discouraged me from fixing many things.
+  - Most files WILL compile and run if you try to compile and upload one,
+      but with different behaviour than if just #includ'ing them,
+      usually offering their specific functionallity with the ability to
+      tempororily modify cosntants (use the debugger to see them)
+      see "PID CONTROL"
+  - About the above, something like this appears in many files.
+      If you know about #define, #ifdef & #include it should make some sense
+      (what happens when MAIN_USED us allready #define'd? and when it isn't?)
+                #ifndef MAIN_USED
+                  #define QESL_IS_MAIN
+                  #define MAIN_USED
+                #endif
+                <#includes>
+                ...
+                #ifdef QESL_IS_MAIN
+                task main(){
+                #else
+                void QEstraightMain(){
+                #endif
+                ...<code>...
+                }
+  TERMS USED
+    - quad, QE -> quadrachure(sic) encoder 
+    - const, k -> constant
+    - blocks -> doesn't return
+  
+  PID CONTROL (any file with a kP, kI & kD somewhere in its contents)
+    - Read the PDF (NOTE: the cortex handles floats fine)
+    - Core code was originally written in PIDexperamental.c then copied and modified many times, the most recent going into the new file
+        (see point 7 in "TO UNDERSTAND THIS CODE")
+    - Most code is fairly similar but with different error sources, constants & motor outputs
+    - Try to understand the constant changing (adjustment) code in a PID file, (it's all the same)
+        then compile and upload THE FILE THAT HAS THE CONSTS YOU WISH TO EXPERAMEMT WITH
+        and chance the consts as the bot runs using the buttons. (use the debugger to see them)
+        copy the values back into the file.
+        NOTE: ONE_DEG and some others have to be done manually (modify, upload, test, repeat)
+    - Sometimes the hardest part about writing a PID controller is getting a good error source.
+    
+FINAL NOTE
+  If this were done in any other language in any other IDE, I would have done things completely different (extendable PID object...etc.)
+  It's *quadrachure* encoder not quadratic encoder
+  
+BUGS
+  - Turning in a certain direction (I don't remember) using quad PID turns too
+      far (or stops wrong?) for some reason, just started happening sometime near the end of the year. Not sure why.
+  - grabAndLiftAfterTouch stops working without the clawLimitSensor attached
+  
+TODOs
+  - Rewrite the horrible hack that is grabAndLiftAfterTouch as a sepearte task
+  - Make some sort of general PID function (take everything as parameters) that would reduce repeat code
+  - "include guard" (google it) in most files (but it doesn't seem to be needed?)
+  - Possibly modify QEstop.c to not reset the quad(s)
